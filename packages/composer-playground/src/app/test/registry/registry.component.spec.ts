@@ -340,6 +340,34 @@ describe(`RegistryComponent`, () => {
         }));
     });
 
+    describe('viewTransactionData', () => {
+        it('should open the modal', fakeAsync(() => {
+            mockNgbModal.open = sinon.stub().returns({
+                componentInstance: {
+                    transaction: {}
+                },
+                result: Promise.resolve('some error')
+            });
+
+            let mockTransaction = {};
+            component.viewTransactionData(mockTransaction);
+
+            tick();
+
+            mockNgbModal.open.should.have.been.called;
+        }));
+    });
+
+    describe('updateTableScroll', () => {
+        it('should assign a value to the tableScrolled variable', () => {
+            component.tableScrolled.should.be.false;
+            component.updateTableScroll(true);
+            component.tableScrolled.should.be.true;
+            component.updateTableScroll(false);
+            component.tableScrolled.should.be.false;
+        });
+    });
+
     describe('#isTransactionRegistry', () => {
         it('should return true if reigstry type is transaction', () => {
             component['registryType'] = 'Transaction';

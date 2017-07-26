@@ -158,13 +158,13 @@ describe('ViewTransactionComponent', () => {
 
     describe('#ngOnInit', () => {
         it('should create arrays of Resources, JSON and strings', fakeAsync(() => {
+            component['transaction'] = mockTransaction;
             component.ngOnInit();
             tick();
             mockInitializationService.initialize.should.be.called;
             mockBusinessNetwork.getSerializer.should.be.called;
 
             mockSerializer.toJSON.should.be.calledWith(mockTransaction);
-            component.transaction.should.deep.equal({$class: 'mock.class', timestamp: 'now', transactionId: 'transaction'});
             component.transactionString.should.equal(JSON.stringify({$class: 'mock.class', timestamp: 'now', transactionId: 'transaction'}, null, ' '));
 
             component.events.should.deep.equal([mockEvent1, mockEvent2]);

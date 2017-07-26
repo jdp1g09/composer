@@ -12,7 +12,7 @@
             <div class="navcontent">
                 <ul class="links navleft">
                     <li><button class="action" [ngClass]="{'active': !isEvent}" (click)="showTransaction()">Transaction</button></li>
-                    <li><button class="action" [ngClass]="{'active': isEvent}" (click)="showEvents()">Events ({{events.length}})</button></li>
+                    <li><button class="action" [ngClass]="{'active': isEvent, 'disabled': !events.length}" (click)="showEvents()">Events ({{events.length}})</button></li>
                 </ul>
             </div>
         </nav>

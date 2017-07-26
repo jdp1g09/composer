@@ -5,6 +5,7 @@ import { ClientService } from '../../services/client.service';
 import { AlertService } from '../../basic-modals/alert.service';
 import { ResourceComponent } from '../resource/resource.component';
 import { ConfirmComponent } from '../../basic-modals/confirm/confirm.component';
+import { ViewTransactionComponent } from '../view-transaction/view-transaction.component';
 
 @Component({
     selector: 'registry',
@@ -15,6 +16,8 @@ import { ConfirmComponent } from '../../basic-modals/confirm/confirm.component';
 })
 
 export class RegistryComponent {
+
+    tableScrolled = false;
 
     private _registry = null;
     private _reload = null;
@@ -124,6 +127,15 @@ export class RegistryComponent {
                 // modal but will that always be true
             }
         });
+    }
+
+    viewTransactionData(transaction: any) {
+        let transactionModalRef = this.modalService.open(ViewTransactionComponent);
+        transactionModalRef.componentInstance.transaction = transaction;
+    }
+
+    updateTableScroll(hasScroll) {
+        this.tableScrolled = hasScroll;
     }
 
     private isTransactionRegistry(): boolean {

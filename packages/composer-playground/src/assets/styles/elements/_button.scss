@@ -233,6 +233,11 @@
             }
         }
 
+        &.disabled {
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
         & svg.standard-icon {
             margin-right: 10px;
         }

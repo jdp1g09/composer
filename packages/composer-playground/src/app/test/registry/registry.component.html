@@ -8,38 +8,56 @@
         </button>
     </div>
 </div>
-<div *ngIf="_registry" class="resource-list">
-    <div class="title" [ngClass]="{'resource-empty' : !resources || resources.length === 0}">
-        <div class="id">ID</div>
-        <div class="data">Data</div>
-    </div>
-    <div *ngFor="let resource of resources" class="resource-container">
-        <div checkOverFlow [changed]="resource.getIdentifier()" [expanded]="resource.getIdentifier() === expandedResource" (hasOverFlow)="hasOverFlow($event, resource)"
-             class="resource-content" [ngClass]="{'expanded' : resource.getIdentifier() === expandedResource}">
-            <div class="id">{{resource.getIdentifier()}}</div>
-            <pre #resourcedata
-                [ngClass]="{'gradient' : resource.getIdentifier() !== expandedResource && overFlowedResources[resource.getIdentifier()], 'tiny-gradient' : resource.getIdentifier() === expandedResource || !overFlowedResources[resource.getIdentifier()]}"
-                class="data">{{serialize(resource)}}</pre>
-            <div *ngIf="!isTransactionRegistry()" class="resource-icon">
-                <button type="button" class="icon" (click)="editResource(resource)">
-                    <svg class="ibm-icon" aria-hidden="true">
-                        <use xlink:href="#icon-edit_32"></use>
-                    </svg>
-                </button>
-            </div>
-            <div *ngIf="!isTransactionRegistry()" class="resource-icon">
-                <button type="button" class="icon" (click)="openDeleteResourceModal(resource)">
-                    <svg class="ibm-icon" aria-hidden="true">
-                        <use xlink:href="#icon-trash_32"></use>
-                    </svg>
-                </button>
-            </div>
+<div *ngIf="_registry" class="resource-list" [ngClass]="{'transaction-list' : _registry.registryType==='Transaction'}">
+    <div *ngIf="_registry.registryType!=='Transaction'">
+        <div class="title" [ngClass]="{'resource-empty' : !resources || resources.length === 0}">
+            <div class="id">ID</div>
+            <div class="data">Data</div>
         </div>
-        <button *ngIf="overFlowedResources[resource.getIdentifier()]" class="expand" type="button" (click)="expandResource(resource)">
-            {{resource.getIdentifier() === expandedResource ? 'Collapse' : 'Show All'}}
-        </button>
+        <div *ngFor="let resource of resources" class="resource-container">
+            <div checkOverFlow [changed]="resource.getIdentifier()" [expanded]="resource.getIdentifier() === expandedResource" (hasOverFlow)="hasOverFlow($event, resource)"
+                 class="resource-content" [ngClass]="{'expanded' : resource.getIdentifier() === expandedResource}">
+                <div class="id">{{resource.getIdentifier()}}</div>
+                <pre #resourcedata
+                    [ngClass]="{'gradient' : resource.getIdentifier() !== expandedResource && overFlowedResources[resource.getIdentifier()], 'tiny-gradient' : resource.getIdentifier() === expandedResource || !overFlowedResources[resource.getIdentifier()]}"
+                    class="data">{{serialize(resource)}}</pre>
+                <div *ngIf="!isTransactionRegistry()" class="resource-icon">
+                    <button type="button" class="icon" (click)="editResource(resource)">
+                        <svg class="ibm-icon" aria-hidden="true">
+                            <use xlink:href="#icon-edit_32"></use>
+                        </svg>
+                    </button>
+                </div>
+                <div *ngIf="!isTransactionRegistry()" class="resource-icon">
+                    <button type="button" class="icon" (click)="openDeleteResourceModal(resource)">
+                        <svg class="ibm-icon" aria-hidden="true">
+                            <use xlink:href="#icon-trash_32"></use>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <button *ngIf="overFlowedResources[resource.getIdentifier()]" class="expand" type="button" (click)="expandResource(resource)">
+                {{resource.getIdentifier() === expandedResource ? 'Collapse' : 'Show All'}}
+            </button>
+        </div>
     </div>
 
+    <table *ngIf="resources && resources.length > 0 && _registry.registryType==='Transaction'">
+        <thead [ngClass]="{'tbody-scrolled' : tableScrolled}">
+            <tr>
+                <th class="width-50">ID</th>
+                <th class="width-30">Time</th>
+                <th class="width-20"></th>
+            </tr>
+        </thead>
+        <tbody id="transactiontbody" checkScroll (hasScroll)="updateTableScroll($event)">
+            <tr *ngFor="let resource of resources">
+                <td class="width-50 truncate-text">{{ resource.getIdentifier() }}</td>
+                <td class="width-30 truncate-text">{{ resource.timestamp | date:'HH:mm:ss on dd/MM/yyyy'}}</td>
+                <td class="width-20 truncate-text"><a href="#" (click)="viewTransactionData(resource)">view data</a></td>
+            </tr>
+        </tbody>
+    </table>
 
     <div *ngIf="!resources || resources.length === 0" class="no-resources">
         <svg class="ibm-icon" aria-hidden="true">

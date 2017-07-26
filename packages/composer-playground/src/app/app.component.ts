@@ -222,7 +222,8 @@ export class AppComponent implements OnInit, OnDestroy {
 
     onEvent(eventStatus) {
         if (eventStatus) {
-            this.modalService.open(ViewTransactionComponent);
+            let transactionModalRef = this.modalService.open(ViewTransactionComponent);
+            transactionModalRef.componentInstance.transaction = this.transactionService.lastTransaction;
         }
     }
 
