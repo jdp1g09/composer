@@ -169,13 +169,20 @@ class EngineTransactions {
         // Get the transaction in question and also create a relationship
         record.transactionInvoked = factory.newRelationship('org.hyperledger.composer.system','Transaction',transaction.getIdentifier());
         record.transactionTimestamp = transaction.timestamp;
+        record.transactionType = transaction.getType();
 
         // Get the events that are generated - getting these as Resources
         let evtSvr = context.getEventService();
-        if(!evtSvr){
-            record.eventsEmitted = [];
-        } else {
-            record.eventsEmitted = evtSvr.getEventResources();
+        record.eventsEmitted = [];
+
+        if(evtSvr) {
+            let s = evtSvr.getEvents();
+            if (s) {
+                s.forEach((element) => {
+                    let r = context.getSerializer().fromJSON(element);
+                    record.eventsEmitted.push(r);
+                } );
+            }
         }
 
         // Note that this is only call out to collect data that returns a promise.
@@ -183,13 +190,19 @@ class EngineTransactions {
         return context.getIdentityManager().getIdentity()
         .then( (result) => {
             record.identityUsed = factory.newRelationship('org.hyperledger.composer.system','Identity',result.getIdentifier());
-            return;
-        }).catch((error) => {
-            LOG.error(method,error);
+            LOG.exit(method, record);
+            return record;
+        }).catch(error => {
+            //TODO:  need to remove this when the admin is sorted out!
+            if(error.identityName){
+                LOG.debug(method, 'admin userid again');
+            } else {
+                throw error;
+            }
         }).then(()=>{
             LOG.exit(method, record);
             return record;
-        });
+        } );
 
     }
 
