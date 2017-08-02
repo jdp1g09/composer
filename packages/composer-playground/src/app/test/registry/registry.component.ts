@@ -52,12 +52,28 @@ export class RegistryComponent {
 
     loadResources() {
         this.overFlowedResources = {};
+
         this._registry.getAll()
             .then((resources) => {
-                if (this.isTransactionRegistry()) {
+                if (this.isHistorian()) {
+                    console.log(resources);
                     this.resources = resources.sort((a, b) => {
-                        return b.timestamp - a.timestamp;
+                        return b.transactionTimestamp - a.transactionTimestamp;
                     });
+                    /*let promises = [];
+                    return this.clientService.getBusinessNetworkConnection().getTransactionRegistry()
+                        .then((transactionRegistry) => {
+                            this.resources.forEach((record, i) => {
+                                console.log(record);
+                                promises.push(transactionRegistry.get(record.transactionId));
+                            });
+                            return Promise.all(promises);
+                        })
+                        .then((transactions) => {
+                            this.resources.forEach((record, i) => {
+                                // record.transactionType = transactions[i].getType();
+                            });
+                        });*/
                 } else {
                     this.resources = resources.sort((a, b) => {
                         return a.getIdentifier().localeCompare(b.getIdentifier());
@@ -67,6 +83,7 @@ export class RegistryComponent {
             .catch((error) => {
                 this.alertService.errorStatus$.next(error);
             });
+
     }
 
     serialize(resource: any): string {
@@ -138,7 +155,7 @@ export class RegistryComponent {
         this.tableScrolled = hasScroll;
     }
 
-    private isTransactionRegistry(): boolean {
-        return this.registryType === 'Transaction';
+    private isHistorian(): boolean {
+        return this.registryType === 'Historian';
     }
 }

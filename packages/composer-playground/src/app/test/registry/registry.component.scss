@@ -159,7 +159,7 @@ registry {
           height: calc(100% - 76px);
           width: 100%;
           position: absolute;
-          overflow-y: scroll;
+          overflow-y: auto;
           tr {
             width: 100%;
             display: table;

@@ -2,14 +2,14 @@
     <div class="resource-header-left">
         <h1>{{_registry.name}}</h1>
     </div>
-    <div *ngIf="!isTransactionRegistry()">
+    <div *ngIf="!isHistorianRegistry()">
         <button type="button" class="registry" (click)="openNewResourceModal()">
             <span>+ Create New {{_registry.registryType}}</span>
         </button>
     </div>
 </div>
-<div *ngIf="_registry" class="resource-list" [ngClass]="{'transaction-list' : _registry.registryType==='Transaction'}">
-    <div *ngIf="_registry.registryType!=='Transaction'">
+<div *ngIf="_registry" class="resource-list" [ngClass]="{'transaction-list' : isHistorianRegistry()}">
+    <div *ngIf="_registry.registryType!=='Historian'">
         <div class="title" [ngClass]="{'resource-empty' : !resources || resources.length === 0}">
             <div class="id">ID</div>
             <div class="data">Data</div>
@@ -21,14 +21,14 @@
                 <pre #resourcedata
                     [ngClass]="{'gradient' : resource.getIdentifier() !== expandedResource && overFlowedResources[resource.getIdentifier()], 'tiny-gradient' : resource.getIdentifier() === expandedResource || !overFlowedResources[resource.getIdentifier()]}"
                     class="data">{{serialize(resource)}}</pre>
-                <div *ngIf="!isTransactionRegistry()" class="resource-icon">
+                <div *ngIf="!isHistorianRegistry()" class="resource-icon">
                     <button type="button" class="icon" (click)="editResource(resource)">
                         <svg class="ibm-icon" aria-hidden="true">
                             <use xlink:href="#icon-edit_32"></use>
                         </svg>
                     </button>
                 </div>
-                <div *ngIf="!isTransactionRegistry()" class="resource-icon">
+                <div *ngIf="!isHistorianRegistry()" class="resource-icon">
                     <button type="button" class="icon" (click)="openDeleteResourceModal(resource)">
                         <svg class="ibm-icon" aria-hidden="true">
                             <use xlink:href="#icon-trash_32"></use>
@@ -42,19 +42,23 @@
         </div>
     </div>
 
-    <table *ngIf="resources && resources.length > 0 && _registry.registryType==='Transaction'">
+    <table *ngIf="resources && resources.length > 0 && isHistorianRegistry()">
         <thead [ngClass]="{'tbody-scrolled' : tableScrolled}">
             <tr>
-                <th class="width-50">ID</th>
-                <th class="width-30">Time</th>
-                <th class="width-20"></th>
+                <th class="width-30">ID</th>
+                <th class="width-10">Time</th>
+                <th class="width-20">Participant ID</th>
+                <th class="width-20">Transaction Type</th>
+                <th class="width-10"></th>
             </tr>
         </thead>
         <tbody id="transactiontbody" checkScroll (hasScroll)="updateTableScroll($event)">
             <tr *ngFor="let resource of resources">
-                <td class="width-50 truncate-text">{{ resource.getIdentifier() }}</td>
-                <td class="width-30 truncate-text">{{ resource.timestamp | date:'HH:mm:ss on dd/MM/yyyy'}}</td>
-                <td class="width-20 truncate-text"><a href="#" (click)="viewTransactionData(resource)">view data</a></td>
+                <td class="width-30 truncate-text">{{ resource.getIdentifier() }}</td>
+                <td class="width-10 truncate-text">{{ resource.transactionTimestamp | date:'HH:mm:ss' }}</td>
+                <td class="width-20 truncate-text">{{ resource.participantInvoking ? resource.participantInvoking.$identifier : '&lt;system&gt;' }}</td>
+                <td class="width-20 truncate-text">{{ resource.transactionType || 'TBC' }}</td>
+                <td class="width-10 truncate-text"><a href="#" (click)="viewTransactionData(resource)">view data</a></td>
             </tr>
         </tbody>
     </table>
@@ -64,9 +68,9 @@
             <use xlink:href="#icon-Emptiness"></use>
         </svg>
         <h3>This registry is empty!</h3>
-        <p *ngIf="_registry.registryType!='Transaction'">To create resources in this registry click create new at the
+        <p *ngIf="!isHistorianRegistry()">To create resources in this registry click create new at the
             top of
             this page</p>
-        <p *ngIf="_registry.registryType=='Transaction'">Submit a Transaction via the side menu</p>
+        <p *ngIf="isHistorianRegistry()">Submit a Transaction via the side menu</p>
     </div>
 </div>
